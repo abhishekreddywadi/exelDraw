@@ -4,16 +4,22 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npm run build && npm run start",
+    "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
     "build": "tsc -b"
   },
   "dependencies": {
     "@repo/typescript-config": "workspace:*",
+    "@repo/db": "workspace:*",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/ws": "^8.18.1",
     "jsonwebtoken": "^9.0.3",
+    "uuid": "^13.0.0",
     "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^11.0.0",
+    "tsx": "^4.7.0"
   },
   "keywords": [],
   "author": "",

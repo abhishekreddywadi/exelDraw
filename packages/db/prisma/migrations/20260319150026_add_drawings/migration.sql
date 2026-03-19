@@ -1,0 +1,19 @@
+-- CreateTable
+CREATE TABLE "Drawing" (
+    "Id" SERIAL NOT NULL,
+    "x" DOUBLE PRECISION NOT NULL,
+    "y" DOUBLE PRECISION NOT NULL,
+    "color" TEXT NOT NULL,
+    "size" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "RoomId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Drawing_pkey" PRIMARY KEY ("Id")
+);
+
+-- AddForeignKey
+ALTER TABLE "Drawing" ADD CONSTRAINT "Drawing_RoomId_fkey" FOREIGN KEY ("RoomId") REFERENCES "Room"("Id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Drawing" ADD CONSTRAINT "Drawing_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("Id") ON DELETE RESTRICT ON UPDATE CASCADE;
