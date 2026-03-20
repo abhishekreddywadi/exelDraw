@@ -12,11 +12,6 @@ import type {
     WSPresenceMessage,
     WSTypingMessage,
     WSErrorMessage,
-    WSCanvasUpdateMessage,
-    WSCursorMoveMessage,
-    WSDrawMessage,
-    WSCellStyleUpdateMessage,
-    WSCanvasClearMessage,
     Cell,
     Cursor,
 } from './types';
@@ -350,7 +345,7 @@ export function useWebSocket(): UseWebSocketReturn {
                 break;
 
             case 'presence':
-                const presenceMsg = message as WSPresenceMessage;
+                { const presenceMsg = message as WSPresenceMessage;
 
                 // Add to presence events
                 setPresenceEvents((prev) => [...prev.slice(-49), presenceMsg]);
@@ -362,10 +357,10 @@ export function useWebSocket(): UseWebSocketReturn {
                     console.log('Successfully joined room:', presenceMsg.data.room);
                     setHasJoinedRoom(true);
                 }
-                break;
+                break; }
 
             case 'typing':
-                const typingMsg = message as WSTypingMessage;
+                { const typingMsg = message as WSTypingMessage;
                 const { userId, userEmail, isTyping } = typingMsg.data;
 
                 // Clear existing timeout for this user
@@ -396,72 +391,18 @@ export function useWebSocket(): UseWebSocketReturn {
                         return newMap;
                     });
                 }
-                break;
+                break; }
 
             case 'error':
-                const errorMsg = message as WSErrorMessage;
+                { const errorMsg = message as WSErrorMessage;
                 console.error('WebSocket error:', errorMsg.data.message);
                 setError(errorMsg.data.message);
-                break;
-
-            // Excel Draw Canvas message handlers
-            case 'canvas_update':
-                const canvasUpdateMsg = message as WSCanvasUpdateMessage;
-                const updatedCell = canvasUpdateMsg.data.cell;
-                updateCanvasCell(updatedCell);
-                break;
-
-            case 'cursor_move':
-                const cursorMsg = message as WSCursorMoveMessage;
-                setRemoteCursors((prev) => {
-                    // Update or add cursor
-                    const existing = prev.findIndex(c => c.userId === cursorMsg.data.userId);
-                    const newCursor: Cursor = {
-                        userId: cursorMsg.data.userId,
-                        userEmail: cursorMsg.data.userEmail,
-                        row: cursorMsg.data.row,
-                        col: cursorMsg.data.col,
-                        color: getUserColor(cursorMsg.data.userId),
-                    };
-
-                    if (existing >= 0) {
-                        const updated = [...prev];
-                        updated[existing] = newCursor;
-                        return updated;
-                    }
-                    return [...prev, newCursor];
-                });
-                break;
-
-            case 'draw':
-                const drawMsg = message as WSDrawMessage;
-                setDrawings((prev) => [...prev, {
-                    x: drawMsg.data.x,
-                    y: drawMsg.data.y,
-                    color: drawMsg.data.color,
-                    size: drawMsg.data.size,
-                    userId: drawMsg.data.userId,
-                }]);
-                break;
-
-            case 'cell_style_update':
-                const styleUpdateMsg = message as WSCellStyleUpdateMessage;
-                const styledCell = styleUpdateMsg.data.cell;
-                updateCanvasCell(styledCell);
-                break;
-
-            case 'canvas_clear':
-                const clearMsg = message as WSCanvasClearMessage;
-                // Canvas clear received from another user - clear the local canvas
-                // Note: The sender already cleared locally via clearCanvasData()
-                setCanvasCells(new Map());
-                setDrawings([]);
-                break;
+                break; }
 
             default:
                 console.log('Unknown message type:', message);
         }
-    }, [updateCanvasCell]);
+    }, []);
 
     // Cleanup on unmount
     useEffect(() => {
@@ -505,19 +446,4 @@ export function useWebSocket(): UseWebSocketReturn {
  * Generate a consistent color for a user based on their ID
  * This ensures each user has a unique color for their cursor
  */
-function getUserColor(userId: number): string {
-    // Predefined colors for collaborators
-    const colors = [
-        '#ef4444', // red
-        '#f59e0b', // amber
-        '#10b981', // emerald
-        '#3b82f6', // blue (default for current user)
-        '#8b5cf6', // violet
-        '#ec4899', // pink
-        '#06b6d4', // cyan
-        '#f97316', // orange
-    ];
 
-    // Use modulo to get consistent color for each user
-    return colors[userId % colors.length];
-}

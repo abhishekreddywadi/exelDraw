@@ -178,27 +178,6 @@ async function handleMessage(ws: AuthenticatedWebSocket, message: WebSocketMessa
             handlePresence(ws, message);
             break;
 
-        // Excel Draw Canvas messages
-        case 'canvas_update':
-            handleCanvasUpdate(ws, message);
-            break;
-
-        case 'cursor_move':
-            handleCursorMove(ws, message);
-            break;
-
-        case 'draw':
-            handleDraw(ws, message);
-            break;
-
-        case 'cell_style_update':
-            handleCellStyleUpdate(ws, message);
-            break;
-
-        case 'canvas_clear':
-            handleCanvasClear(ws, message);
-            break;
-
         default:
             console.warn(`⚠️ Unknown message type: ${message.type}`);
             sendError(ws, `Unknown message type: ${message.type}`);
